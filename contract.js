@@ -12,4 +12,5 @@ if (window?.WEBSITE_URL?.includes(window.location.hostname)) {
     abi = ameegosAbi;
 }
 
-export let contract = new web3.eth.Contract(abi, address);
+export const contract = new web3.eth.Contract(abi, address);
+window.contract = contract;
