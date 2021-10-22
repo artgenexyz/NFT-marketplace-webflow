@@ -5,6 +5,13 @@ const isMetaMaskConnected = async () => {
     return accounts.length > 0;
 }
 
+export const getWalletAddress = async () => {
+    if (ethereum.selectedAddress) {
+        return ethereum.selectedAddress;
+    }
+    return await web3.eth.getAccounts()[0];
+}
+
 export const updateMetaMaskStatus = () => {
     isMetaMaskConnected().then((connected) => {
         let button = document.querySelector('#connect');
