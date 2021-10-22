@@ -1,7 +1,7 @@
 import { contract } from "./contract.js";
 
 const buyItem = (buy_button) => {
-    const item = buy_button.parent;
+    const item = buy_button.parentElement;
     const price = item.getElementsByClassName("price")[0]?.textContent;
     const token_id = item.getElementsByClassName("nft-id")[0]?.textContent;
     console.log(price, token_id)
@@ -17,7 +17,7 @@ export const insertItemLinks = () => {
     if (items) {
         items.forEach((item) => {
             item.onclick = () => {
-                buyItem()
+                buyItem(item)
             }
         })
     }
