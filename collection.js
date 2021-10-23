@@ -4,13 +4,16 @@ import { getWalletAddress } from "./wallet.js";
 const buyItem = async (buy_button) => {
     const item = buy_button.parentElement;
     const price = item.getElementsByClassName("price")[0]?.textContent;
-    const token_id = item.getElementsByClassName("nft-id")[0]?.textContent;
+    const tokenID = item.getElementsByClassName("nft-id")[0]?.textContent;
     const wallet = await getWalletAddress();
-    console.log(price, token_id)
-    contract.methods.buyItem(token_id, 1).send({
+    console.log(price, tokenID)
+    const tx = contract.methods.buyItem(tokenID, 1);
+    const txData = {
         from: wallet,
         value: Number(price) * 1e18
-    }).then((r) => {
+    }
+    const estimatedGas = await tx.estimateGas(txData);
+    tx.send({...txData, gasLimit: estimatedGas + 5000}).then((r) => {
         console.log(r);
     })
 };
