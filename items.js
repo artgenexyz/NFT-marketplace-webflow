@@ -2,6 +2,8 @@ import {itemsContract, tokenContract} from "./contract.js";
 import { getWalletAddress } from "./wallet.js";
 
 const buyItem = async (buy_button) => {
+    const initialText = buy_button.textContent;
+    buy_button.textContent = "Loading..."
     const item = buy_button.parentElement;
     const tokenID = 1;
     // const tokenID = item.getElementsByClassName("nft-id")[0]?.textContent;
@@ -11,23 +13,36 @@ const buyItem = async (buy_button) => {
     console.log("ITEMS", items);
     const price = items.price;
     let tx;
+    let txData;
     if (items.itemType === "0") {
         tx = itemsContract.methods.buyItem(tokenID, 1);
+        txData = {
+            from: wallet,
+            value: price
+        }
     } else if (items.itemType === "1") {
         const approveTx = tokenContract.methods.approve(itemsContract._address, price);
         const approveTxData = { from: wallet };
-        const estimatedGas = await approveTx.estimateGas(approveTxData);
-        await approveTx.send({...approveTxData, gasLimit: estimatedGas + 5000})
+        const estimatedGas = await approveTx.estimateGas(approveTxData).catch((e) => {
+            buy_button.textContent = initialText;
+        })
+        await approveTx.send({...approveTxData, gasLimit: estimatedGas + 5000}).catch((e) => {
+            buy_button.textContent = initialText;
+        })
         tx = itemsContract.methods.claimItem(tokenID, 1);
+        txData = {
+            from: wallet
+        }
     }
-    const txData = {
-        from: wallet,
-        value: price
-    }
-    const estimatedGas = await tx.estimateGas(txData);
+    const estimatedGas = await tx.estimateGas(txData).catch((e) => {
+        buy_button.textContent = initialText;
+    });
     console.log(estimatedGas)
     await tx.send({...txData, gasLimit: estimatedGas + 5000}).then((r) => {
         console.log(r);
+        buy_button.textContent = initialText;
+    }).catch((e) => {
+        buy_button.textContent = initialText;
     })
 };
 
