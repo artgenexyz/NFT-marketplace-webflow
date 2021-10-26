@@ -11,7 +11,7 @@ export const getWalletAddress = async (refresh=false) => {
         }
         return ethereum?.selectedAddress ?? await ethereum.request({ method: 'eth_requestAccounts' })[0];
     }
-    if (!await currentAddress()) {
+    if (!ethereum?.selectedAddress) {
         await connectMetamask();
         if (refresh) {
             window.location.reload();
