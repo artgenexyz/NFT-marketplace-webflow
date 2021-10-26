@@ -1,16 +1,26 @@
-import { itemsContract } from "./contract.js";
+import {itemsContract, tokenContract} from "./contract.js";
 import { getWalletAddress } from "./wallet.js";
 
 const buyItem = async (buy_button) => {
     const item = buy_button.parentElement;
-    const price = item.getElementsByClassName("price")[0]?.textContent;
     const tokenID = item.getElementsByClassName("nft-id")[0]?.textContent;
     const wallet = await getWalletAddress();
-    console.log(price, tokenID)
-    const tx = itemsContract.methods.buyItem(tokenID, 1);
+    const items = await itemsContract.methods.items(tokenID).call();
+    console.log("ITEMS", items);
+    const price = items.price;
+    let tx;
+    if (items.itemType === 0) {
+        tx = itemsContract.methods.buyItem(tokenID, 1);
+    } else {
+        const approveTx = tokenContract.methods.approve(wallet, price);
+        const approveTxData = { from: wallet };
+        const estimatedGas = await approveTx.estimateGas(approveTxData);
+        await approveTx.send({...approveTxData, gasLimit: estimatedGas + 5000})
+        tx = itemsContract.methods.claimItem(tokenID, 1);
+    }
     const txData = {
         from: wallet,
-        value: Number(price) * 1e18
+        value: price
     }
     const estimatedGas = await tx.estimateGas(txData);
     console.log(estimatedGas)

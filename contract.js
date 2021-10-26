@@ -1,4 +1,4 @@
-import { ALLOWED_NETWORKS, AMEEGOS_ITEMS_CONTRACT, AMEEGOS_NFT_CONTRACT } from './contracts/ameegos.js';
+import {AGOS_TOKEN, ALLOWED_NETWORKS, AMEEGOS_ITEMS_CONTRACT, AMEEGOS_NFT_CONTRACT} from './contracts/ameegos.js';
 import { getCurrentNetwork, web3 } from './wallet.js';
 
 const initContract = async (contract) => {
@@ -13,4 +13,7 @@ const initContract = async (contract) => {
 
 export const NFTContract = await initContract(AMEEGOS_NFT_CONTRACT);
 export const itemsContract = await initContract(AMEEGOS_ITEMS_CONTRACT);
+export const tokenContract = await initContract(AGOS_TOKEN);
 window.NFTContract = NFTContract;
+window.itemsContract = itemsContract;
+window.tokenContract = tokenContract;
