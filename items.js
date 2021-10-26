@@ -6,12 +6,13 @@ const buyItem = async (buy_button) => {
     const tokenID = item.getElementsByClassName("nft-id")[0]?.textContent;
     const wallet = await getWalletAddress();
     const items = await itemsContract.methods.items(tokenID).call();
+    console.log("TOKEN ID", tokenID)
     console.log("ITEMS", items);
     const price = items.price;
     let tx;
-    if (items.itemType === 0) {
+    if (items.itemType === "0") {
         tx = itemsContract.methods.buyItem(tokenID, 1);
-    } else {
+    } else if (items.itemType === "1") {
         const approveTx = tokenContract.methods.approve(wallet, price);
         const approveTxData = { from: wallet };
         const estimatedGas = await approveTx.estimateGas(approveTxData);
