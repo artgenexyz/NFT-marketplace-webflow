@@ -11,5 +11,6 @@ const initContract = async (contract) => {
     return new web3.eth.Contract(abi, address);
 }
 
-export const NFTContract = initContract(AMEEGOS_NFT_CONTRACT);
-export const itemsContract = initContract(AMEEGOS_ITEMS_CONTRACT);
+export const NFTContract = await initContract(AMEEGOS_NFT_CONTRACT);
+export const itemsContract = await initContract(AMEEGOS_ITEMS_CONTRACT);
+window.NFTContract = NFTContract;

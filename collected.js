@@ -13,8 +13,8 @@ const fetchTokens = async () => {
     return metadataObjs.map((r) => ({...r, image: getIPFSUrl(r.image) }))
 };
 
-export const duplicateItems = () => {
+export const duplicateItems = async () => {
     const template = document.querySelector('#item-template');
-    const nfts = fetchTokens();
+    const nfts = await fetchTokens();
     console.log(nfts);
 }
