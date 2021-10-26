@@ -3,7 +3,8 @@ import { getWalletAddress } from "./wallet.js";
 
 const buyItem = async (buy_button) => {
     const item = buy_button.parentElement;
-    const tokenID = item.getElementsByClassName("nft-id")[0]?.textContent;
+    const tokenID = 1;
+    // const tokenID = item.getElementsByClassName("nft-id")[0]?.textContent;
     const wallet = await getWalletAddress();
     const items = await itemsContract.methods.items(tokenID).call();
     console.log("TOKEN ID", tokenID)
