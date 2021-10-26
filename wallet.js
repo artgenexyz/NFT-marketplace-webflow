@@ -1,37 +1,47 @@
-export const web3 = new Web3(ethereum);
+export const web3 = window.ethereum ? new Web3(ethereum) : undefined;
 
-const isMetaMaskConnected = async () => {
-    let accounts = await web3.eth.getAccounts();
-    return accounts.length > 0;
+const isMetamaskConnected = () => {
+    return window.ethereum && ethereum?.selectedAddress !== null;
 }
 
 export const getWalletAddress = async () => {
-    if (ethereum.selectedAddress) {
-        return ethereum.selectedAddress;
-    }
-    return await web3.eth.getAccounts()[0];
-}
-
-export const updateMetaMaskStatus = () => {
-    isMetaMaskConnected().then((connected) => {
-        let button = document.querySelector('#connect');
-        if (connected) {
-            button.textContent = "MetaMask connected";
+    const currentAddress = async () => {
+        if (!window.ethereum) {
+            return undefined;
         }
-    });
+        return ethereum?.selectedAddress ?? await ethereum.request({ method: 'eth_requestAccounts' })[0];
+    }
+    if (!await currentAddress()) {
+        await connectMetamask();
+    }
+    return await currentAddress();
 }
 
-export const connectMetaMask = async (shouldReload = true) => {
-    if (await isMetaMaskConnected() === false) {
-        await ethereum.enable();
-        await updateMetaMaskStatus();
-        if (shouldReload) {
-            location.reload();
-        }
+export const getCurrentNetwork = async () => {
+    return Number(await ethereum.request({ method: 'net_version' }));
+}
+
+export const updateMetamaskStatus = () => {
+    const connected = isMetamaskConnected()
+    if (connected) {
+        const button = document.querySelector(window.buttonID ?? '#connect');
+        button.textContent = "Metamask connected";
     }
 }
 
-window.onload = () => {
-    updateMetaMaskStatus();
+export const connectMetamask = async () => {
+    const isMobile = /Mobi/i.test(window.navigator.userAgent)
+        || /iPhone|iPod|iPad/i.test(navigator.userAgent);
+    if (window.ethereum) {
+        await ethereum.request({ method: 'eth_requestAccounts' });
+        updateMetamaskStatus();
+    } else if (isMobile) {
+        const link = window.location.href
+            .replace("https://", "")
+            .replace("www.", "");
+        window.open(`https://metamask.app.link/dapp/${link}`);
+    }
 }
-document.querySelector(window.buttonID ?? '#connect').addEventListener('click', connectMetaMask);
+
+document.querySelector(window.buttonID ?? '#connect').addEventListener('click', connectMetamask);
+updateMetamaskStatus();
