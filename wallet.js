@@ -1,7 +1,11 @@
 export const web3 = window.ethereum ? new Web3(ethereum) : undefined;
 
-const isMetamaskConnected = () => {
-    return window.ethereum && ethereum?.selectedAddress !== null;
+const isMetamaskConnected = async () => {
+    if (!web3) {
+        return false
+    }
+    const accounts = await web3.eth.getAccounts();
+    return accounts.length > 0;
 }
 
 export const getWalletAddress = async (refresh=false) => {
@@ -24,8 +28,8 @@ export const getCurrentNetwork = async () => {
     return Number(await ethereum.request({ method: 'net_version' }));
 }
 
-export const updateMetamaskStatus = () => {
-    const connected = isMetamaskConnected()
+export const updateMetamaskStatus = async () => {
+    const connected = await isMetamaskConnected()
     if (connected) {
         const button = document.querySelector(window.buttonID ?? '#connect');
         button.textContent = "Metamask connected";
@@ -33,11 +37,10 @@ export const updateMetamaskStatus = () => {
 }
 
 export const connectMetamask = async () => {
-    const isMobile = /Mobi/i.test(window.navigator.userAgent)
-        || /iPhone|iPod|iPad/i.test(navigator.userAgent);
+    const isMobile = isMobile();
     if (window.ethereum) {
         await ethereum.request({ method: 'eth_requestAccounts' });
-        updateMetamaskStatus();
+        await updateMetamaskStatus();
     } else if (isMobile) {
         const link = window.location.href
             .replace("https://", "")
@@ -46,5 +49,8 @@ export const connectMetamask = async () => {
     }
 }
 
+const isMobile = () => /Mobi/i.test(window.navigator.userAgent)
+    || /iPhone|iPod|iPad/i.test(navigator.userAgent);
+
 document.querySelector(window.buttonID ?? '#connect').addEventListener('click', connectMetamask);
-updateMetamaskStatus();
+await updateMetamaskStatus();
