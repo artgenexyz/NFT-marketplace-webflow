@@ -4,7 +4,7 @@ const isMetamaskConnected = () => {
     return window.ethereum && ethereum?.selectedAddress !== null;
 }
 
-export const getWalletAddress = async () => {
+export const getWalletAddress = async (refresh=false) => {
     const currentAddress = async () => {
         if (!window.ethereum) {
             return undefined;
@@ -13,6 +13,9 @@ export const getWalletAddress = async () => {
     }
     if (!await currentAddress()) {
         await connectMetamask();
+        if (refresh) {
+            window.location.reload();
+        }
     }
     return await currentAddress();
 }
