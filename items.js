@@ -14,7 +14,7 @@ const buyItem = async (buy_button) => {
     if (items.itemType === "0") {
         tx = itemsContract.methods.buyItem(tokenID, 1);
     } else if (items.itemType === "1") {
-        const approveTx = tokenContract.methods.approve(wallet, price);
+        const approveTx = tokenContract.methods.approve(itemsContract._address, price);
         const approveTxData = { from: wallet };
         const estimatedGas = await approveTx.estimateGas(approveTxData);
         await approveTx.send({...approveTxData, gasLimit: estimatedGas + 5000})
