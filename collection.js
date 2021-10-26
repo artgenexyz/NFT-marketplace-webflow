@@ -1,4 +1,4 @@
-import { contract } from "./contract.js";
+import { itemsContract} from "./contract.js";
 import { getWalletAddress } from "./wallet.js";
 
 const buyItem = async (buy_button) => {
@@ -7,7 +7,7 @@ const buyItem = async (buy_button) => {
     const tokenID = item.getElementsByClassName("nft-id")[0]?.textContent;
     const wallet = await getWalletAddress();
     console.log(price, tokenID)
-    const tx = contract.methods.buyItem(tokenID, 1);
+    const tx = itemsContract.methods.buyItem(tokenID, 1);
     const txData = {
         from: wallet,
         value: Number(price) * 1e18

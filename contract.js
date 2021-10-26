@@ -1,16 +1,15 @@
-import { ameegosAddress, ameegosAbi } from './contracts/ameegos.js';
-import { web3 } from './wallet.js';
+import { ALLOWED_NETWORKS, AMEEGOS_ITEMS_CONTRACT, AMEEGOS_NFT_CONTRACT } from './contracts/ameegos.js';
+import { getCurrentNetwork, web3 } from './wallet.js';
 
-export let address;
-export let abi;
-
-if (window?.marketplaceContract?.websiteURL?.includes(window.location.hostname)) {
-    address = window.marketplaceContract.address;
-    abi = window.marketplaceContract.abi;
-} else if (window.location.hostname.includes('ameegos.io')) {
-    address = ameegosAddress;
-    abi = ameegosAbi;
+const initContract = async (contract) => {
+    const currentNetwork = await getCurrentNetwork();
+    if (!ALLOWED_NETWORKS.includes(currentNetwork)) {
+        alert("You're on the wrong network. Please try switching to mainnet or Rinkeby, and refresh the page")
+    }
+    const address = contract.address[currentNetwork];
+    const abi = contract.abi;
+    return new web3.eth.Contract(abi, address);
 }
 
-export const contract = new web3.eth.Contract(abi, address);
-window.contract = contract;
+export const NFTContract = initContract(AMEEGOS_NFT_CONTRACT);
+export const itemsContract = initContract(AMEEGOS_ITEMS_CONTRACT);
