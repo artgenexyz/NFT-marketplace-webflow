@@ -32,7 +32,7 @@ const buyItem = async (buy_button) => {
 export const insertItemLinks = () => {
     const items = document.getElementsByClassName("buy-button");
     if (items) {
-        items.forEach((item) => {
+        Array.from(items).forEach((item) => {
             item.onclick = async () => {
                 await buyItem(item)
             }
