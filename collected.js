@@ -12,8 +12,8 @@ const fetchTokens = async () => {
         }
     });
     const tx = NFTContract.methods.walletOfOwner(wallet);
-    // const tokens = await tx.call();
-    const tokens = [1336, 1337, 1338];
+    const tokens = await tx.call();
+    // const tokens = [1336, 1337, 1338];
     const txUri = (tokenID) => NFTContract.methods.tokenURI(tokenID)
     const tokenURIs = await Promise.all(tokens.map(async (tokenID) => await txUri(tokenID).call()))
     const metadataObjs = await Promise.all(tokenURIs.map(async (url) => await fetch(getIPFSUrl(url)).then(r => r.json())));
