@@ -1,4 +1,4 @@
-import { itemsContract} from "./contract.js";
+import { itemsContract } from "./contract.js";
 import { getWalletAddress } from "./wallet.js";
 
 const buyItem = async (buy_button) => {
