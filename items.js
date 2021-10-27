@@ -25,7 +25,8 @@ const buyItem = async (buy_button) => {
         const allowance = await tokenContract.methods.allowance(wallet, itemsContract._address).call()
         
         if (Number(allowance) == 0) {
-            const approveTx = tokenContract.methods.approve(itemsContract._address, 1e77); // approx. 2^256 - 1
+            const maxUint = "115792089237316195423570985008687907853269984665640564039457584007913129639935"; // = 2^256 - 1, from https://etherscan.io/tx/0xad66b94f5bae8221c2e862680cdcb9e1ff24183db0579de1618d40892a39ffa4
+            const approveTx = tokenContract.methods.approve(itemsContract._address, maxUint);
             const approveTxData = { from: wallet };
             const estimatedGas = await approveTx.estimateGas(approveTxData).catch((e) => {
                 buy_button.textContent = initialText;
