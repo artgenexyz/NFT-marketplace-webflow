@@ -22,14 +22,19 @@ const buyItem = async (buy_button) => {
             value: price
         }
     } else if (items.itemType === "1") {
-        const approveTx = tokenContract.methods.approve(itemsContract._address, price);
-        const approveTxData = { from: wallet };
-        const estimatedGas = await approveTx.estimateGas(approveTxData).catch((e) => {
-            buy_button.textContent = initialText;
-        })
-        await approveTx.send({...approveTxData, gasLimit: estimatedGas + 5000}).catch((e) => {
-            buy_button.textContent = initialText;
-        })
+        const allowance = await tokenContract.methods.allowance(wallet, itemsContract._address).call()
+        
+        if (Number(allowance) == 0) {
+            const approveTx = tokenContract.methods.approve(itemsContract._address, 1e77); // approx. 2^256 - 1
+            const approveTxData = { from: wallet };
+            const estimatedGas = await approveTx.estimateGas(approveTxData).catch((e) => {
+                buy_button.textContent = initialText;
+            })
+            await approveTx.send({...approveTxData, gasLimit: estimatedGas + 5000}).catch((e) => {
+                buy_button.textContent = initialText;
+            })
+        }
+        
         tx = itemsContract.methods.claimItem(tokenID, 1);
         txData = {
             from: wallet
