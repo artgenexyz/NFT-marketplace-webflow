@@ -23,7 +23,7 @@ const buyItem = async (buy_button) => {
     } else if (items.itemType === "1") {
         const tokensAvailable = await tokenContract.methods.balanceOf(wallet).call();
         if (Number(tokensAvailable) < price) {
-            alert(`Not enough AGOS! You need ${price} AGOS to make this transaction`);
+            alert(`Not enough AGOS! You need ${Math.round(price / 1e18)} AGOS to make this transaction`);
             return
         }
 
