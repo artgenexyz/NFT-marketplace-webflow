@@ -14,7 +14,6 @@ const buyItem = async (buy_button) => {
     const price = items.price;
     let tx;
     let txData;
-    let hardcodedGas = undefined;
     if (items.itemType === "0") {
         tx = itemsContract.methods.buyItem(tokenID, 1);
         txData = {
@@ -23,7 +22,7 @@ const buyItem = async (buy_button) => {
         }
     } else if (items.itemType === "1") {
         const allowance = await tokenContract.methods.allowance(wallet, itemsContract._address).call()
-        
+
         if (Number(allowance) < price) {
             const maxUint = "115792089237316195423570985008687907853269984665640564039457584007913129639935"; // = 2^256 - 1, from https://etherscan.io/tx/0xad66b94f5bae8221c2e862680cdcb9e1ff24183db0579de1618d40892a39ffa4
             const approveTx = tokenContract.methods.approve(itemsContract._address, maxUint);
@@ -35,14 +34,15 @@ const buyItem = async (buy_button) => {
                 buy_button.textContent = initialText;
             })
         }
-        
+
         tx = itemsContract.methods.claimItem(tokenID, 1);
         txData = {
             from: wallet
         }
-        hardcodedGas = 250000
     }
-    const estimatedGas = hardcodedGas === undefined ? await tx.estimateGas(txData) : hardcodedGas;
+    const estimatedGas = await tx.estimateGas(txData).catch((e) => {
+        buy_button.textContent = initialText;
+    });
     console.log(estimatedGas)
     await tx.send({...txData, gasLimit: estimatedGas + 5000}).then((r) => {
         console.log(r);
