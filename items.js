@@ -32,6 +32,9 @@ const buyItem = async (buy_button) => {
             })
             await approveTx.send({...approveTxData, gasLimit: estimatedGas + 5000}).catch((e) => {
                 buy_button.textContent = initialText;
+                if (e.code === 4001) {
+                    throw e;
+                }
             })
         }
 
