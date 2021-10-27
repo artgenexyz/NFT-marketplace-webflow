@@ -40,7 +40,7 @@ const buyItem = async (buy_button) => {
         txData = {
             from: wallet
         }
-        hardcodedGas = 100000
+        hardcodedGas = 250000
     }
     const estimatedGas = hardcodedGas === undefined ? await tx.estimateGas(txData) : hardcodedGas;
     console.log(estimatedGas)
