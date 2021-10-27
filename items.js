@@ -5,8 +5,8 @@ const buyItem = async (buy_button) => {
     const initialText = buy_button.textContent;
     buy_button.textContent = "Loading..."
     const item = buy_button.parentElement;
-    const tokenID = 1;
-    // const tokenID = item.getElementsByClassName("nft-id")[0]?.textContent;
+//     const tokenID = 1;
+    const tokenID = item.getElementsByClassName("nft-id")[0]?.textContent;
     const wallet = await getWalletAddress();
     const items = await itemsContract.methods.items(tokenID).call();
     console.log("TOKEN ID", tokenID)
