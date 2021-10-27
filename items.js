@@ -21,8 +21,13 @@ const buyItem = async (buy_button) => {
             value: price
         }
     } else if (items.itemType === "1") {
-        const allowance = await tokenContract.methods.allowance(wallet, itemsContract._address).call()
+        const tokensAvailable = await tokenContract.methods.balanceOf(wallet).call();
+        if (Number(tokensAvailable) < price) {
+            alert(`Not enough AGOS! You need ${price} AGOS to make this transaction`);
+            return
+        }
 
+        const allowance = await tokenContract.methods.allowance(wallet, itemsContract._address).call()
         if (Number(allowance) < price) {
             const maxUint = "115792089237316195423570985008687907853269984665640564039457584007913129639935"; // = 2^256 - 1, from https://etherscan.io/tx/0xad66b94f5bae8221c2e862680cdcb9e1ff24183db0579de1618d40892a39ffa4
             const approveTx = tokenContract.methods.approve(itemsContract._address, maxUint);
@@ -37,7 +42,6 @@ const buyItem = async (buy_button) => {
                 }
             })
         }
-
         tx = itemsContract.methods.claimItem(tokenID, 1);
         txData = {
             from: wallet
