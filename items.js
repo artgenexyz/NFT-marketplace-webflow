@@ -14,6 +14,7 @@ const buyItem = async (buy_button) => {
     const price = items.price;
     let tx;
     let txData;
+    let hardcodedGas = undefined;
     if (items.itemType === "0") {
         tx = itemsContract.methods.buyItem(tokenID, 1);
         txData = {
@@ -33,10 +34,9 @@ const buyItem = async (buy_button) => {
         txData = {
             from: wallet
         }
+        hardcodedGas = 100000
     }
-    const estimatedGas = await tx.estimateGas(txData).catch((e) => {
-        buy_button.textContent = initialText;
-    });
+    const estimatedGas = hardcodedGas === undefined ? await tx.estimateGas(txData) : hardcodedGas;
     console.log(estimatedGas)
     await tx.send({...txData, gasLimit: estimatedGas + 5000}).then((r) => {
         console.log(r);
