@@ -59,12 +59,29 @@ const buyItem = async (buy_button) => {
     })
 };
 
+const setRemainingTotalAmounts = async (buy_button) => {
+    const item = buy_button.parentElement;
+    const tokenID = item.getElementsByClassName("nft-id")[0]?.textContent;
+    const itemInfo = await itemsContract.methods.items(tokenID).call();
+    const [remaining, total] = [itemInfo.maxSupply - itemInfo.mintedSupply, itemInfo.maxSupply];
+    const remainingElem = item.getElementsByClassName("remaining-amount")[0];
+    const totalElem = item.getElementsByClassName("total-amount")[0];
+    remainingElem.textContent = remaining;
+    totalElem.textContent = total;
+}
+
 export const insertItemLinks = () => {
     const items = document.getElementsByClassName("buy-button");
     if (items) {
-        Array.from(items).forEach((item) => {
+        Array.from(items).forEach(async (item) => {
             item.onclick = async () => {
                 await buyItem(item)
+            }
+
+            try {
+                await setRemainingTotalAmounts(item);
+            } catch (e) {
+                console.log(e)
             }
         })
     }
