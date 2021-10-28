@@ -50,8 +50,7 @@ const buyItem = async (buy_button) => {
     const estimatedGas = await tx.estimateGas(txData).catch((e) => {
         buy_button.textContent = initialText;
     });
-    console.log(estimatedGas)
-    await tx.send({...txData, gasLimit: estimatedGas + 5000}).then((r) => {
+    await tx.send({...txData, gasLimit: estimatedGas ?? 100000 + 5000}).then((r) => {
         console.log(r);
         buy_button.textContent = initialText;
     }).catch((e) => {
