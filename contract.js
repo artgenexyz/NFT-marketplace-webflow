@@ -15,13 +15,11 @@ const initContract = async (contract) => {
     return new web3.eth.Contract(abi, address);
 }
 
-const setContracts = async () => {
+export const setContracts = async () => {
     NFTContract = await initContract(AMEEGOS_NFT_CONTRACT);
     itemsContract = await initContract(AMEEGOS_ITEMS_CONTRACT);
     tokenContract = await initContract(AGOS_TOKEN);
+    window.NFTContract = NFTContract;
+    window.itemsContract = itemsContract;
+    window.tokenContract = tokenContract;
 }
-
-setContracts();
-window.NFTContract = NFTContract;
-window.itemsContract = itemsContract;
-window.tokenContract = tokenContract;
