@@ -53,4 +53,4 @@ export const connectMetamask = async () => {
 }
 
 document.querySelector(window.buttonID ?? '#connect').addEventListener('click', connectMetamask);
-await updateMetamaskStatus();
+updateMetamaskStatus();
