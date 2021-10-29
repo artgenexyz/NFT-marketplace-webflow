@@ -1,14 +1,18 @@
-import {AGOS_TOKEN, ALLOWED_NETWORKS, AMEEGOS_ITEMS_CONTRACT, AMEEGOS_NFT_CONTRACT} from './contracts/ameegos.js';
-import { getCurrentNetwork, web3 } from './wallet.js';
+import { getAllowedNetworks, AGOS_TOKEN, AMEEGOS_ITEMS_CONTRACT, AMEEGOS_NFT_CONTRACT } from './contracts/ameegos.js';
+import { getCurrentNetwork, switchNetwork, web3 } from './wallet.js';
 
 export let NFTContract;
 export let itemsContract;
 export let tokenContract;
 
 const initContract = async (contract) => {
-    const currentNetwork = await getCurrentNetwork();
-    if (!ALLOWED_NETWORKS.includes(currentNetwork)) {
-        alert("You're on the wrong network. Please try switching to mainnet or Rinkeby, and refresh the page")
+    if (!window.location.href.includes(contract.allowedURL)) {
+        return undefined;
+    }
+    let currentNetwork = await getCurrentNetwork();
+    if (!getAllowedNetworks(contract).includes(currentNetwork)) {
+        await switchNetwork(getAllowedNetworks(contract)[0])
+        currentNetwork = await getCurrentNetwork();
     }
     const address = contract.address[currentNetwork];
     const abi = contract.abi;
@@ -16,9 +20,9 @@ const initContract = async (contract) => {
 }
 
 export const setContracts = async () => {
-    NFTContract = await initContract(AMEEGOS_NFT_CONTRACT);
     itemsContract = await initContract(AMEEGOS_ITEMS_CONTRACT);
     tokenContract = await initContract(AGOS_TOKEN);
+    NFTContract = await initContract(AMEEGOS_NFT_CONTRACT);
     window.NFTContract = NFTContract;
     window.itemsContract = itemsContract;
     window.tokenContract = tokenContract;

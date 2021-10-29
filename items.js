@@ -80,7 +80,7 @@ export const insertItemLinks = () => {
             try {
                 await setRemainingTotalAmounts(item);
             } catch (e) {
-                console.log(e)
+                console.log(e, item)
             }
         })
     }

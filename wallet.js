@@ -1,3 +1,5 @@
+import {NETWORKS} from "./constants.js";
+
 export const web3 = window.ethereum ? new Web3(ethereum) : undefined;
 
 const isMetamaskConnected = async () => {
@@ -28,6 +30,42 @@ export const getCurrentNetwork = async () => {
     return Number(await ethereum.request({ method: 'net_version' }));
 }
 
+export const switchNetwork = async (chainID) => {
+    if (!window.ethereum) {
+        return
+    }
+    const chainIDHex = `0x${chainID.toString(16)}`;
+    try {
+        await ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: chainIDHex }],
+        });
+    } catch (error) {
+        // This error code indicates that the chain has not been added to MetaMask
+        // if it is not, then install it into the user MetaMask
+        if (error.code === 4902) {
+            try {
+                await ethereum.request({
+                    method: 'wallet_addEthereumChain',
+                    params: [
+                        {
+                            chainId: chainIDHex,
+                            nativeCurrency: NETWORKS[chainID].currency,
+                            chainName: NETWORKS[chainID].name,
+                            rpcUrls: [NETWORKS[chainID].rpcURL],
+                            blockExplorerUrls: [NETWORKS[chainID].blockExplorerURL]
+                        },
+                    ],
+
+                });
+            } catch (addError) {
+                console.error(addError);
+            }
+        }
+        console.error(error);
+    }
+}
+
 export const updateMetamaskStatus = async () => {
     const connected = await isMetamaskConnected()
     if (connected) {
@@ -53,4 +91,3 @@ export const connectMetamask = async () => {
 }
 
 document.querySelector(window.buttonID ?? '#connect').addEventListener('click', connectMetamask);
-updateMetamaskStatus();
