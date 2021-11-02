@@ -28,5 +28,25 @@ export const NETWORKS = {
             decimals: 18
         },
         blockExplorerURL: "https://polygonscan.com/"
-    }
+    },
+    56: {
+        name: "Binance Smart Chain Mainnet",
+        rpcURL: "https://bsc-dataseed1.binance.org",
+        currency: {
+          name: "Binance Chain Native Token",
+          symbol: "BNB",
+          decimals: 18
+        },
+        blockExplorerURL: "https://bscscan.com",
+    },
+    97: {
+        name: "Binance Smart Chain Testnet",
+        rpcURL: "https://data-seed-prebsc-1-s1.binance.org:8545",
+        currency: {
+          name: "Binance Chain Native Token",
+          symbol: "tBNB",
+          decimals: 18
+        },
+        blockExplorerURL: "https://testnet.bscscan.com",
+    },
 }
