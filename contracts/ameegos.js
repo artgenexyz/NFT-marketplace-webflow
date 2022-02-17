@@ -23,7 +23,6 @@ export const AGOS_TOKEN = {
     address: {
         1: '0x5e2C6385e2b663A2F460BFB3a9d18C76c4739ff5',
         4: '0xe09761c663276d8ad44c3f45c7529634056da856',
-        137: '0xf2ae3b1cc92e60d778fe8f4b995723cbad6395ec'
     },
     abi: [
         {
